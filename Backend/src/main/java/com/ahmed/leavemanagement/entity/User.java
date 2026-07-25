@@ -46,9 +46,46 @@ public class User implements UserDetails {
     private Role role = Role.EMPLOYEE;
 
 
-    @ManyToOne
+
+    /*
+     * Employee belongs to a department
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
+
+
+
+    /*
+     * Employee -> Manager
+     *
+     * Example:
+     *
+     * Ahmed.manager = Mohamed
+     *
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    private User manager;
+
+
+
+    /*
+     * Manager -> Employees
+     *
+     * Example:
+     *
+     * Mohamed.employees
+     *
+     * returns:
+     *
+     * Ahmed
+     * Ali
+     * Sara
+     *
+     */
+    @OneToMany(mappedBy = "manager")
+    private List<User> employees;
 
 
 

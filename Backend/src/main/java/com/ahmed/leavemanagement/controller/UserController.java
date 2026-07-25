@@ -6,6 +6,8 @@ import com.ahmed.leavemanagement.service.UserService;
 import com.ahmed.leavemanagement.dto.UserResponse;
 
 import jakarta.validation.Valid;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,15 +26,23 @@ public class UserController {
     }
 
 
+
     // GET ALL USERS
+    // Permission: VIEW_ALL_DATA
+    // Role: ADMIN
     @GetMapping
-public List<UserResponse> getAllUsers() {
-    return userService.getAllUsers();
-}
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
 
 
     // CREATE USER
+    // Permission: CREATE_USER
+    // Role: ADMIN
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public User createUser(
             @Valid @RequestBody UserDTO userDTO
     ) {
@@ -40,8 +50,12 @@ public List<UserResponse> getAllUsers() {
     }
 
 
+
     // GET USER BY EMAIL
+    // Permission: VIEW_USER
+    // Role: ADMIN
     @GetMapping("/email/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
     public User getUserByEmail(
             @PathVariable String email
     ) {

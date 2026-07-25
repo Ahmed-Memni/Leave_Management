@@ -1,24 +1,33 @@
 package com.ahmed.leavemanagement.config;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.authentication.AuthenticationProvider;
+
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.ahmed.leavemanagement.security.JwtAuthenticationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
 
     private final AuthenticationProvider authenticationProvider;
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
 
 
     @Bean
@@ -31,7 +40,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
 
-                // JWT = stateless
+                // JWT is stateless
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -39,45 +48,35 @@ public class SecurityConfig {
                 )
 
 
-                // Connect our UserDetailsService + BCrypt authentication
+                // Authentication provider
                 .authenticationProvider(authenticationProvider)
 
+
+                // JWT filter
                 .addFilterBefore(
-                 jwtAuthenticationFilter,
-                 UsernamePasswordAuthenticationFilter.class
-                 )
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
 
 
                 .authorizeHttpRequests(auth -> auth
 
 
-                        // Public endpoints
-                        .requestMatchers("/api/auth/**")
+                        // Public authentication endpoints
+                        .requestMatchers("/api/auth/login")
                         .permitAll()
 
 
-                        // Only ADMIN
-                        .requestMatchers("/api/users/**")
+                        // Register should be protected
+                        // Admin creates users
+                        .requestMatchers("/api/auth/register")
                         .hasRole("ADMIN")
 
 
-                        // Only ADMIN
-                        .requestMatchers("/api/departments/**")
-                        .hasRole("ADMIN")
-
-
-                        // Leave requests
-                        .requestMatchers("/api/leave-requests/**")
-                        .hasAnyRole(
-                                "ADMIN",
-                                "MANAGER",
-                                "EMPLOYEE"
-                        )
-
-
-                        // Everything else needs authentication
+                        // Everything else requires login
                         .anyRequest()
                         .authenticated()
+
                 );
 
 
