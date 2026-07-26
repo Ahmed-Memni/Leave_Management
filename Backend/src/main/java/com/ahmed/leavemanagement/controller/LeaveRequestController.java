@@ -3,6 +3,8 @@ package com.ahmed.leavemanagement.controller;
 import com.ahmed.leavemanagement.dto.LeaveRequestDTO;
 import com.ahmed.leavemanagement.entity.LeaveRequest;
 import com.ahmed.leavemanagement.service.LeaveRequestService;
+import org.springframework.security.core.Authentication;
+import com.ahmed.leavemanagement.entity.User;
 
 import jakarta.validation.Valid;
 
@@ -42,9 +44,19 @@ public class LeaveRequestController {
     @PostMapping
     @PreAuthorize("hasAnyRole('EMPLOYEE','MANAGER','ADMIN')")
     public LeaveRequest createRequest(
-            @Valid @RequestBody LeaveRequestDTO leaveRequestDTO
+        @Valid @RequestBody LeaveRequestDTO leaveRequestDTO,
+        Authentication authentication
     ) {
-        return leaveRequestService.createRequest(leaveRequestDTO);
+
+
+    User currentUser =
+            (User) authentication.getPrincipal();
+
+
+    return leaveRequestService.createRequest(
+            leaveRequestDTO,
+            currentUser
+    );
     }
 
 
@@ -54,21 +66,41 @@ public class LeaveRequestController {
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
     public LeaveRequest approveRequest(
-            @PathVariable Long id
+        @PathVariable Long id,
+        Authentication authentication
     ) {
-        return leaveRequestService.approveRequest(id);
+
+
+    User manager =
+            (User) authentication.getPrincipal();
+
+
+    return leaveRequestService.approveRequest(
+            id,
+            manager
+    );
     }
 
 
 
     // REJECT LEAVE REQUEST
     // Manager and Admin only
-    @PutMapping("/{id}/reject")
-    @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
+   @PutMapping("/{id}/reject")
+   @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
     public LeaveRequest rejectRequest(
-            @PathVariable Long id
-    ) {
-        return leaveRequestService.rejectRequest(id);
+        @PathVariable Long id,
+        Authentication authentication
+  ) {
+
+
+    User manager =
+            (User) authentication.getPrincipal();
+
+
+    return leaveRequestService.rejectRequest(
+            id,
+            manager
+    );
     }
 
 }

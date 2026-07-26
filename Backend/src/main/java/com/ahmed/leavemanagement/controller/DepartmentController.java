@@ -29,7 +29,7 @@ public class DepartmentController {
     // VIEW DEPARTMENTS
     // Manager and Admin
     @GetMapping
-    @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Department> getAllDepartments() {
         return departmentService.getAllDepartments();
     }

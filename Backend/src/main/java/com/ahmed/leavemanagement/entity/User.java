@@ -47,43 +47,21 @@ public class User implements UserDetails {
 
 
 
-    /*
-     * Employee belongs to a department
-     */
+    // Department relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
 
 
 
-    /*
-     * Employee -> Manager
-     *
-     * Example:
-     *
-     * Ahmed.manager = Mohamed
-     *
-     */
+    // Manager relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
     private User manager;
 
 
 
-    /*
-     * Manager -> Employees
-     *
-     * Example:
-     *
-     * Mohamed.employees
-     *
-     * returns:
-     *
-     * Ahmed
-     * Ali
-     * Sara
-     *
-     */
+    // Employees managed by this user
     @OneToMany(mappedBy = "manager")
     private List<User> employees;
 

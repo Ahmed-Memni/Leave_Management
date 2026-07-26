@@ -43,77 +43,64 @@ public class LeaveRequestService {
 
 
     public LeaveRequest createRequest(
-            LeaveRequestDTO dto
-    ) {
+        LeaveRequestDTO dto,
+        User currentUser
+) {
 
 
-        LeaveRequest leaveRequest =
-                leaveRequestMapper.toEntity(dto);
+    LeaveRequest leaveRequest =
+            leaveRequestMapper.toEntity(dto);
 
 
-
-        User employee =
-                userRepository.findById(
-                        dto.getEmployeeId()
-                )
-                .orElseThrow(
-                    () -> new RuntimeException("Employee not found")
-                );
+    leaveRequest.setEmployee(currentUser);
 
 
-        User employer =
-                userRepository.findById(
-                        dto.getEmployerId()
-                )
-                .orElseThrow(
-                    () -> new RuntimeException("Employer not found")
-                );
+    leaveRequest.setStatus(
+            LeaveStatus.PENDING
+    );
 
 
-        leaveRequest.setEmployee(employee);
-
-        leaveRequest.setEmployer(employer);
-
-
-        leaveRequest.setStatus(
-                LeaveStatus.PENDING
-        );
-
-
-        return leaveRequestRepository.save(leaveRequest);
-    }
+    return leaveRequestRepository.save(leaveRequest);
+}
 
 
 
-    public LeaveRequest approveRequest(Long id) {
-
-        LeaveRequest request =
-                leaveRequestRepository.findById(id)
-                .orElseThrow();
+    public LeaveRequest approveRequest(Long id, User manager) {
 
 
-        request.setStatus(
-                LeaveStatus.APPROVED
-        );
+    LeaveRequest request =
+            leaveRequestRepository.findById(id)
+            .orElseThrow();
 
 
-        return leaveRequestRepository.save(request);
-    }
+    request.setStatus(
+            LeaveStatus.APPROVED
+    );
 
 
-
-    public LeaveRequest rejectRequest(Long id) {
-
-        LeaveRequest request =
-                leaveRequestRepository.findById(id)
-                .orElseThrow();
+    request.setApprover(manager);
 
 
-        request.setStatus(
-                LeaveStatus.REJECTED
-        );
+    return leaveRequestRepository.save(request);
+}
 
 
-        return leaveRequestRepository.save(request);
-    }
+    public LeaveRequest rejectRequest(Long id, User manager) {
+
+
+    LeaveRequest request =
+            leaveRequestRepository.findById(id)
+            .orElseThrow();
+
+
+    request.setStatus(
+            LeaveStatus.REJECTED
+    );
+
+
+    request.setApprover(manager);
+
+
+    return leaveRequestRepository.save(request);
+}
 }

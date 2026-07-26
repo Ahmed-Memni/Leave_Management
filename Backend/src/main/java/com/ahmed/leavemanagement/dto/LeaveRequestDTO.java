@@ -34,10 +34,4 @@ public class LeaveRequestDTO {
     private LeaveStatus status;
 
 
-    @NotNull(message = "Employee is required")
-    private Long employeeId;
-
-
-    @NotNull(message = "Employer is required")
-    private Long employerId;
 }

@@ -4,6 +4,7 @@ import com.ahmed.leavemanagement.dto.UserDTO;
 import com.ahmed.leavemanagement.entity.User;
 import com.ahmed.leavemanagement.service.UserService;
 import com.ahmed.leavemanagement.dto.UserResponse;
+import org.springframework.security.core.Authentication;
 
 import jakarta.validation.Valid;
 
@@ -60,5 +61,65 @@ public class UserController {
             @PathVariable String email
     ) {
         return userService.getUserByEmail(email);
+    }
+
+
+    // GET USER BY ID
+    // Permission: VIEW_USER
+    // Role: ADMIN
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User getUserById(
+        @PathVariable Long id
+    ){
+    return userService.getUserById(id);
+    }
+
+
+    
+    // GET USER BY ID
+    // Permission: UPDATE_USER
+    // Role: ADMIN
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User updateUser(
+        @PathVariable Long id,
+        @RequestBody UserDTO dto
+    ){
+    return userService.updateUser(id,dto);
+    }
+
+
+ 
+
+    // GET USER BY ID
+    // Permission: DELETE_USER
+    // Role: ADMIN
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUser(
+        @PathVariable Long id
+    ){
+    userService.deleteUser(id);
+    }
+
+
+
+
+
+    // GET USER BY ID
+    // Permission: VIEW_TEAM
+    // Role: MANAGER
+    @GetMapping("/team")
+    @PreAuthorize("hasRole('MANAGER')")
+    public List<UserResponse> getMyTeam(
+        Authentication authentication
+     ){
+
+    User manager =
+            (User) authentication.getPrincipal();
+
+
+    return userService.getTeam(manager);
     }
 }

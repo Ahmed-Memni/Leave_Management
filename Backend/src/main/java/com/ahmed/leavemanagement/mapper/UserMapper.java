@@ -1,8 +1,8 @@
 package com.ahmed.leavemanagement.mapper;
 
 import com.ahmed.leavemanagement.dto.UserDTO;
-import com.ahmed.leavemanagement.entity.User;
 import com.ahmed.leavemanagement.dto.UserResponse;
+import com.ahmed.leavemanagement.entity.User;
 
 import org.springframework.stereotype.Component;
 
@@ -17,12 +17,13 @@ public class UserMapper {
 
         dto.setId(user.getId());
 
-        // Combine firstName + lastName into name
-        dto.setName(
-                user.getFirstName() + " " + user.getLastName()
-        );
+        dto.setFirstName(user.getFirstName());
+
+        dto.setLastName(user.getLastName());
 
         dto.setEmail(user.getEmail());
+
+        dto.setRole(user.getRole());
 
 
         if (user.getDepartment() != null) {
@@ -32,25 +33,52 @@ public class UserMapper {
         }
 
 
+        if (user.getManager() != null) {
+            dto.setManagerId(
+                    user.getManager().getId()
+            );
+        }
+
+
         return dto;
     }
 
 
-public UserResponse toResponse(User user) {
 
-    return UserResponse.builder()
-            .id(user.getId())
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .email(user.getEmail())
-            .role(user.getRole())
-            .department(
-                    user.getDepartment() != null
-                            ? user.getDepartment().getName()
-                            : null
-            )
-            .build();
-}
+    public UserResponse toResponse(User user) {
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .role(user.getRole())
+
+                .department(
+                        user.getDepartment() != null
+                                ? user.getDepartment().getName()
+                                : null
+                )
+
+                .managerId(
+                        user.getManager() != null
+                                ? user.getManager().getId()
+                                : null
+                )
+
+                .managerName(
+                        user.getManager() != null
+                                ? user.getManager().getFirstName()
+                                      + " "
+                                      + user.getManager().getLastName()
+                                : null
+                )
+
+                .build();
+    }
+
+
+
 
     public User toEntity(UserDTO dto) {
 
@@ -59,21 +87,24 @@ public UserResponse toResponse(User user) {
 
         user.setId(dto.getId());
 
-        // Split name into firstName and lastName
-        String[] names = dto.getName().split(" ", 2);
+        user.setFirstName(
+                dto.getFirstName()
+        );
 
 
-        user.setFirstName(names[0]);
+        user.setLastName(
+                dto.getLastName()
+        );
 
 
-        if (names.length > 1) {
-            user.setLastName(names[1]);
-        } else {
-            user.setLastName("");
-        }
+        user.setEmail(
+                dto.getEmail()
+        );
 
 
-        user.setEmail(dto.getEmail());
+        user.setRole(
+                dto.getRole()
+        );
 
 
         return user;

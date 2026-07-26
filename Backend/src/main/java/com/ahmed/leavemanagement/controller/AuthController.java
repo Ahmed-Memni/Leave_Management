@@ -4,7 +4,7 @@ package com.ahmed.leavemanagement.controller;
 import com.ahmed.leavemanagement.dto.RegisterRequest;
 import com.ahmed.leavemanagement.entity.User;
 import com.ahmed.leavemanagement.service.AuthService;
-
+import org.springframework.security.core.Authentication;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.access.prepost.PreAuthorize;
